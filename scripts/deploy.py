@@ -6,12 +6,6 @@ dev = accounts.add(os.getenv(config['wallets']['from_key']))
 reward = Reward.deploy({'from': dev})
 crowdcoin = CrowdCoin.deploy({'from': dev})
 
-def get_crowdcoin():
-    return crowdcoin
-
-def get_reward():
-    return reward
-
 def main():
     print('crowdcoin :', crowdcoin.address)
     print('reward :', reward.address)
