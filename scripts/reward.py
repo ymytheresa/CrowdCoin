@@ -84,6 +84,9 @@ def upload_checksum(survey_key, checksum):
 
 def main():
     # sample function calls
+    print('crowdcoin :', crowdcoin.address)
+    print('reward :', reward.address)
+
     print(get_balance(dev))                
     print(get_balance(reward.address))      
     print(add_coin(dev, 999))         
