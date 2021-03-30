@@ -79,7 +79,7 @@ def upload_checksum(survey_key, checksum):
     upload the checksum of survey rewards records text file to the chain
     '''
     log = reward.log_checksum(survey_key, checksum, {'from': dev})
-    return log
+    return log #return transaction hash that can see the checksum on etherscan
     
 
 def main():
