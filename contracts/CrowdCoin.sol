@@ -12,7 +12,7 @@ contract CrowdCoin is ERC20{
     address reward_contract_address;
 
     constructor () public ERC20("CrowdCoin", "CWC"){
-        // _mint(msg.sender, 100000 * (10 ** uint256(decimals())));
+        _mint(msg.sender, 100000 * (10 ** uint256(decimals())));
         // owner = msg.sender;
     }
 

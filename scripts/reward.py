@@ -87,7 +87,7 @@ def main():
     print('crowdcoin :', crowdcoin.address)
     print('reward :', reward.address)
 
-    print(get_balance(dev))                
+    print(get_balance(dev))              
     print(get_balance(reward.address))      
     print(add_coin(dev, 999))         
     print(get_balance(reward.address))
@@ -98,4 +98,6 @@ def main():
     print(get_survey_info('public_key'))
 
     print(upload_checksum('public_key', 'checksum123'))
+
+    # print(args.accumulate(args.integers))
     
