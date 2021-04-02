@@ -26,15 +26,15 @@ contract Reward is Ownable{
     
     mapping(string => SurveyReward) public survey_rewards; //public survey key -> survey reward
     mapping(address => uint256) public dp_staking_rewards;
-    address[] dp_stack;
+    // address[] dp_stack;
 
-    event Log_checksum(string survey_key, string checksum);
+    event Log_checksum(string survey_key, string space, string checksum);
 
     constructor () public Ownable(){
         // SAMPLE RECORD
         add_survey_reward(
             address(this),
-            "THIS_IS_SURVEY_PUBLIC_KEY",
+            "PUBLIC_KEY",
             10000,
             1000,
             75,
@@ -89,45 +89,45 @@ contract Reward is Ownable{
             });
         }
 
-    function calculate_reward(address dp_address, string memory survey_key, uint performance)public onlyOwner{
-        // CALCULATE REWARD OF DATA PROVIDERS BASED ON THEIR PERFORMANCE
-        uint256 reward;
-        SurveyReward memory survey = survey_rewards[survey_key];
-        if (performance >= survey.top_perform_threshold){
-            reward = survey.max_reward;
-        }else if (performance <= survey.low_perform_threshold){
-            reward = survey.min_reward_multiplier * performance;
-        }else{
-            reward = survey.med_reward_multiplier * performance;
-        }
-        dp_staking_rewards[dp_address] = dp_staking_rewards[dp_address] + reward;
-        dp_stack.push(dp_address);
-    }
+    // function calculate_reward(address dp_address, string memory survey_key, uint performance)public onlyOwner{
+    //     // CALCULATE REWARD OF DATA PROVIDERS BASED ON THEIR PERFORMANCE
+    //     uint256 reward;
+    //     SurveyReward memory survey = survey_rewards[survey_key];
+    //     if (performance >= survey.top_perform_threshold){
+    //         reward = survey.max_reward;
+    //     }else if (performance <= survey.low_perform_threshold){
+    //         reward = survey.min_reward_multiplier * performance;
+    //     }else{
+    //         reward = survey.med_reward_multiplier * performance;
+    //     }
+    //     dp_staking_rewards[dp_address] = dp_staking_rewards[dp_address] + reward;
+    //     dp_stack.push(dp_address);
+    // }
 
-    function add_reward(address dp_address, uint256 reward) public onlyOwner{
-        // DIRECTLY RECORD DATA PROVIDERS' REWARD
-        dp_staking_rewards[dp_address] = dp_staking_rewards[dp_address] + reward;
-        dp_stack.push(dp_address);
-    }
+    // function add_reward(address dp_address, uint256 reward) public onlyOwner{
+    //     // DIRECTLY RECORD DATA PROVIDERS' REWARD
+    //     dp_staking_rewards[dp_address] = dp_staking_rewards[dp_address] + reward;
+    //     dp_stack.push(dp_address);
+    // }
 
 
-    function distribute_all_rewards() public onlyOwner{
-        //DISTRIBUTE ALL RECORDED REWARDS AT ONCE (not by survey, probably will call this function every 15 minutes and will transfer all rewards accumulated within the 15 mins)
-        for(uint i=0; i<dp_stack.length; i++){
-            address dp = dp_stack[i];
-            uint256 received_rewards = dp_staking_rewards[dp];
-            if (received_rewards > 0){
-                crowdcoin.transferFrom(contract_address, dp, received_rewards);
-            }
-            dp_staking_rewards[dp] = 0; //reset dp_staking_rewards balance
-        }
-        delete dp_stack; //reset dp_stack records
-    }
+    // function distribute_all_rewards() public onlyOwner{
+    //     //DISTRIBUTE ALL RECORDED REWARDS AT ONCE (not by survey, probably will call this function every 15 minutes and will transfer all rewards accumulated within the 15 mins)
+    //     for(uint i=0; i<dp_stack.length; i++){
+    //         address dp = dp_stack[i];
+    //         uint256 received_rewards = dp_staking_rewards[dp];
+    //         if (received_rewards > 0){
+    //             crowdcoin.transferFrom(contract_address, dp, received_rewards);
+    //         }
+    //         dp_staking_rewards[dp] = 0; //reset dp_staking_rewards balance
+    //     }
+    //     delete dp_stack; //reset dp_stack records
+    // }
 
-    function set_create_survey_cost(uint256 cost)public {
-        // REWARDS POINT TO BE DEDUCTED WHEN CREATE SURVEY
-        create_survey_cost = cost;
-    }
+    // function set_create_survey_cost(uint256 cost)public {
+    //     // REWARDS POINT TO BE DEDUCTED WHEN CREATE SURVEY
+    //     create_survey_cost = cost;
+    // }
 
     function create_survey(
         address survey_owner_address,
@@ -174,9 +174,9 @@ contract Reward is Ownable{
             );
         }
     
-    function log_checksum(string memory survey_key, string memory checksum) public{
+    function log_checksum(string memory survey_key, string memory space, string memory checksum) public{
         if (survey_rewards[survey_key].budget != 0){
-            emit Log_checksum(survey_key, checksum);
+            emit Log_checksum(survey_key, space, checksum);
         }
     }
 

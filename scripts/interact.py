@@ -6,21 +6,15 @@ from web3.middleware import geth_poa_middleware
 from hexbytes import HexBytes as hb
 import argparse
 
-# ac1 = accounts[1]
-# ac2 = accounts[2]
-ac1 = '0x33A4622B82D4c04a53e170c638B944ce27cffce3'
-# ac2 = '0x0063046686E46Dc6F15918b61AE2B121458534a5'
-# dev = accounts.add(os.getenv(config['wallets']['from_key']))
 
-# dev = '0x66aB6D9362d4F35596279692F0251Db635165871'
 dev = os.getenv("PUBLIC_KEY")
-# print(dev)
+dev_priv = os.getenv("PRIVATE_KEY")
+web3.eth.default_account = dev
 
-# infura_url = "https://rinkeby.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa"
-# infura_url = 'https://ropsten.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa'
-infura_url = "http://127.0.0.1:7545"
+infura_url = "https://rinkeby.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa"
+# infura_url = "http://127.0.0.1:7545"
 web3 = Web3(Web3.HTTPProvider(infura_url))
-# web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
 with open('./build/contracts/CrowdCoin.json') as f:
     c_abi = json.load(f)
@@ -38,22 +32,46 @@ with open('./address.txt') as f:
 crowdcoin = web3.eth.contract(address=c_address, abi=c_abi)
 reward = web3.eth.contract(address=r_address, abi=r_abi)
 
+def get_tx(contract):
+    nonce = web3.eth.getTransactionCount(dev)
+    tx = {
+        'nonce': nonce,
+        'to': contract,
+        'value': 0,
+        'gas': 2000000,
+        'gasPrice': web3.toWei('50', 'gwei')
+    }
+    return tx
+
+def sign_tx(tx):
+    signed = web3.eth.account.signTransaction(tx, dev_priv)
+    tx_hash = web3.eth.sendRawTransaction(signed.rawTransaction)
+    return hb.hex(tx_hash)
+
 def get_balance(account):
     '''
     get balance of crowdcoin of that account
     '''
     balance = crowdcoin.functions.balanceOf(account).call()
-    # balance = web3.fromWei(balance, 'ether')
+    if infura_url != "http://127.0.0.1:7545":
+        balance = web3.fromWei(balance, 'ether') #if on testnet
     return balance
+
+def add_coin_get_bal(purchase_add, amount):
+    result = web3.eth.waitForTransactionReceipt((add_coin(purchase_add, amount))) 
+    return get_balance(purchase_add)
 
 def add_coin(purchase_add, amount):
     '''
     account purchase crowdcoin
     '''
     amount = int(amount)
-
-    reward.functions.purchase_coin(purchase_add, amount).transact({'from': dev})
-    return crowdcoin.functions.balanceOf(purchase_add).call()
+    if infura_url != "http://127.0.0.1:7545":
+        amount = web3.toWei(amount, 'ether')
+    tx = get_tx(reward.address)
+    tx['data'] = reward.encodeABI(fn_name='purchase_coin', args=[purchase_add, amount])
+    # sign_tx(tx)
+    return sign_tx(tx)
 
 def get_survey_info(public_key):
     '''
@@ -72,20 +90,29 @@ def create_survey(survey_owner_address,
     '''
     create survey records
     '''
-    reward.functions.create_survey(survey_owner_address,
-        survey_public_key,
-        _budget,
-        _target_number,
-        _top_perform_threshold,
-        _low_perform_threshold,
-    ).transact({'from': dev})
+    tx = get_tx(reward.address)
+    _budget = int(_budget)
+    _target_number = int(_target_number)
+    _top_perform_threshold = int(_top_perform_threshold)
+    _low_perform_threshold = int(_low_perform_threshold)
+
+    tx['data'] = reward.encodeABI(fn_name='create_survey', args=[survey_owner_address,
+                                                                    survey_public_key,
+                                                                    _budget,
+                                                                    _target_number,
+                                                                    _top_perform_threshold,
+                                                                    _low_perform_threshold,])
+    return sign_tx(tx)
+
 
 def upload_checksum(survey_key, checksum):
     '''
     upload the checksum of survey rewards records text file to the chain
     '''
-    log = reward.functions.log_checksum(survey_key, checksum).transact({'from': dev})
-    return log 
+    tx = get_tx(reward.address)
+    separator = '@@@OMIT@@@'
+    tx['data'] = reward.encodeABI(fn_name='log_checksum', args=[survey_key, separator, checksum])
+    return sign_tx(tx)
 
 def upload_checksum_get_hash(survey_key, checksum):
     result = web3.eth.waitForTransactionReceipt((upload_checksum(survey_key, checksum)))
@@ -98,16 +125,16 @@ def verify_purchase(sender_address, tx_hash):
     amount = crowdcoin.decode_function_input(transaction.input)[1]['amount']
     from_address = transaction['from']
     if recipient == reward.address:
-        if  from_address == sender_address:
-            # return web3.fromWei(amount, 'ether')
+        if from_address == sender_address:
+            if infura_url != "http://127.0.0.1:7545":
+                return web3.fromWei(amount, 'ether')
             return amount
     return None
-    # print(log)
 
 
 FUNCTION_MAP = {
     'getbal': get_balance,
-    'addcoin': add_coin,
+    'addcoin': add_coin_get_bal,
     'getsur': get_survey_info,
     'mksur': create_survey,
     'upcheck': upload_checksum_get_hash,
@@ -128,7 +155,7 @@ func = FUNCTION_MAP[args.command]
 
 if func == get_balance or func == get_survey_info:
     print(func(args.revs[0]))
-elif func == add_coin or func == upload_checksum_get_hash or func == verify_purchase:
+elif func == add_coin_get_bal or func == upload_checksum_get_hash or func == verify_purchase:
     a = str(args.revs[0])
     b = str(args.revs[1])
     print(func(a,b))
