@@ -11,8 +11,8 @@ dev = os.getenv("PUBLIC_KEY")
 dev_priv = os.getenv("PRIVATE_KEY")
 web3.eth.default_account = dev
 
-infura_url = "https://rinkeby.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa"
-# infura_url = "http://127.0.0.1:7545"
+infura_url = "https://rinkeby.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa" #if rinkeby
+# infura_url = "http://127.0.0.1:7545" #if ganache
 web3 = Web3(Web3.HTTPProvider(infura_url))
 web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
@@ -142,11 +142,6 @@ FUNCTION_MAP = {
 
 }
 
-# print(get_balance('0x724Ca58E1e6e64BFB1E15d7Eec0fe1E5f581c7bD'))
-# print(add_coin(ac1, 100))
-# print(upload_checksum('text', '123'))
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument('command', choices=FUNCTION_MAP.keys())
 parser.add_argument('revs', metavar='N', nargs='+', help='revisions')
@@ -161,14 +156,3 @@ elif func == add_coin_get_bal or func == upload_checksum_get_hash or func == ver
     print(func(a,b))
 elif func == create_survey:
     print(func(args.revs[0],args.revs[1],args.revs[2],args.revs[3],args.revs[4],args.revs[5]))
-
-# print(func(args.integers))
-# print(func == get_balance)
-# print(type(args.revs[0]))
-# print(type(args.revs[1]))
-# print(type(args.revs[2]))
-
-# create_survey(ac1, 'key', 100000, 1000, 50, 10)
-# print(get_survey_info('key'))
-# add_coin('0x66aB6D9362d4F35596279692F0251Db635165871', '123')
-# print(get_balance(dev))
