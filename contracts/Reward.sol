@@ -124,11 +124,6 @@ contract Reward is Ownable{
         delete dp_stack; //reset dp_stack records
     }
 
-    function claim_gift(address dp, uint256 value) public{
-        // DATA PROVIDER CLAIM GIFT AND DEDUCT THEIR REWARD POINTS
-        crowdcoin.transferFrom(dp, contract_address, value);
-    }
-
     function set_create_survey_cost(uint256 cost)public {
         // REWARDS POINT TO BE DEDUCTED WHEN CREATE SURVEY
         create_survey_cost = cost;

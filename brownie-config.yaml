@@ -25,6 +25,8 @@ networks:
     default_contract_owner: false
   rinkeby:
     host: https://rinkeby.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa
+  rospten:
+    host: https://ropsten.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa
 
 compiler:
   evm_version: null
