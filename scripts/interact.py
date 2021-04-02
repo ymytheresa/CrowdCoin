@@ -11,13 +11,10 @@ import argparse
 ac1 = '0x33A4622B82D4c04a53e170c638B944ce27cffce3'
 # ac2 = '0x0063046686E46Dc6F15918b61AE2B121458534a5'
 # dev = accounts.add(os.getenv(config['wallets']['from_key']))
-<<<<<<< Updated upstream
-dev = '0x66aB6D9362d4F35596279692F0251Db635165871'
-=======
+
 # dev = '0x66aB6D9362d4F35596279692F0251Db635165871'
 dev = os.getenv("PUBLIC_KEY")
 # print(dev)
->>>>>>> Stashed changes
 
 # infura_url = "https://rinkeby.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa"
 # infura_url = 'https://ropsten.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa'
