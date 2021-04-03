@@ -10,8 +10,8 @@ dev = os.getenv("PUBLIC_KEY")
 dev_priv = os.getenv("PRIVATE_KEY")
 web3.eth.default_account = dev
 
-infura_url = "https://rinkeby.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa" #if rinkeby
-# infura_url = "http://127.0.0.1:7545" #if ganache
+# infura_url = "https://rinkeby.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa" #if rinkeby
+infura_url = "http://127.0.0.1:7545" #if ganache
 web3 = Web3(Web3.HTTPProvider(infura_url))
 web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
@@ -103,18 +103,17 @@ def create_survey(survey_owner_address,
                                                                     _low_perform_threshold,])
     return sign_tx(tx)
 
-
-def upload_checksum(survey_key, checksum):
+def upload_checksum(survey_id, checksum):
     '''
     upload the checksum of survey rewards records text file to the chain
     '''
     tx = get_tx(reward.address)
     separator = '@@@OMIT@@@'
-    tx['data'] = reward.encodeABI(fn_name='log_checksum', args=[survey_key, separator, checksum])
+    tx['data'] = reward.encodeABI(fn_name='log_checksum', args=[survey_id, separator, checksum])
     return sign_tx(tx)
 
-def upload_checksum_get_hash(survey_key, checksum):
-    result = web3.eth.waitForTransactionReceipt((upload_checksum(survey_key, checksum)))
+def upload_checksum_get_hash(survey_id, checksum):
+    result = web3.eth.waitForTransactionReceipt((upload_checksum(survey_id, checksum)))
     return hb.hex(result['transactionHash'])
 
 def verify_purchase(sender_address, tx_hash):
@@ -130,6 +129,16 @@ def verify_purchase(sender_address, tx_hash):
             return amount
     return None
 
+def calc_reward(address, survey_id, score):
+    score = int(score)
+    tx = get_tx(reward.address)
+    tx['data'] = reward.encodeABI(fn_name='calculate_reward', args=[address, survey_id, score])
+    return sign_tx(tx)
+
+def distribute_reward():
+    tx = get_tx(reward.address)
+    tx['data'] = reward.encodeABI(fn_name='distribute_all_rewards', args=[])
+    return sign_tx(tx)
 
 FUNCTION_MAP = {
     'getbal': get_balance,
@@ -137,8 +146,9 @@ FUNCTION_MAP = {
     'getsur': get_survey_info,
     'mksur': create_survey,
     'upcheck': upload_checksum_get_hash,
-    'verify': verify_purchase
-
+    'verify': verify_purchase,
+    'calcrew': calc_reward,
+    'distrew': distribute_reward
 }
 
 parser = argparse.ArgumentParser()
@@ -147,11 +157,13 @@ parser.add_argument('revs', metavar='N', nargs='+', help='revisions')
 args = parser.parse_args()
 func = FUNCTION_MAP[args.command]
 
-if func == get_balance or func == get_survey_info:
+if func == distribute_reward:
+    print(func())
+elif func == get_balance or func == get_survey_info:
     print(func(args.revs[0]))
 elif func == add_coin_get_bal or func == upload_checksum_get_hash or func == verify_purchase:
-    a = str(args.revs[0])
-    b = str(args.revs[1])
-    print(func(a,b))
+    print(func(args.revs[0],args.revs[1]))
+elif func == calc_reward:
+    print(func(args.revs[0],args.revs[1],args.revs[2]))
 elif func == create_survey:
     print(func(args.revs[0],args.revs[1],args.revs[2],args.revs[3],args.revs[4],args.revs[5]))

@@ -26,7 +26,7 @@ contract Reward is Ownable{
     
     mapping(string => SurveyReward) public survey_rewards; //public survey key -> survey reward
     mapping(address => uint256) public dp_staking_rewards;
-    // address[] dp_stack;
+    address[] dp_stack;
 
     event Log_checksum(string survey_key, string space, string checksum);
 
@@ -56,12 +56,12 @@ contract Reward is Ownable{
         return budget / target_number;
     }
 
-    function get_min_reward(uint top_perform, uint256 budget, uint256 target_number) public pure returns(uint256){
-        return budget / (4 * target_number * top_perform) ;
+    function get_min_reward(uint top_perform, uint256 budget) public pure returns(uint256){
+        return budget / (3 * top_perform);
     }
 
     function get_med_reward(uint top_perform, uint256 max) public pure returns(uint256){
-        return max / top_perform;
+        return 1000 * max / top_perform;
     }
 
     function add_survey_reward(
@@ -74,7 +74,7 @@ contract Reward is Ownable{
         uint _low_perform_threshold
         )public{
             uint256 _max_reward = get_max_reward(_budget, _target_number);
-            uint256 _min_reward_multiplier = get_min_reward(_top_perform_threshold, _budget, _target_number);
+            uint256 _min_reward_multiplier = get_min_reward(_top_perform_threshold, _budget);
             uint256 _med_reward_multiplier = get_med_reward(_top_perform_threshold, _max_reward);
 
             survey_rewards[survey_public_key] = SurveyReward({
@@ -89,40 +89,40 @@ contract Reward is Ownable{
             });
         }
 
-    // function calculate_reward(address dp_address, string memory survey_key, uint performance)public onlyOwner{
-    //     // CALCULATE REWARD OF DATA PROVIDERS BASED ON THEIR PERFORMANCE
-    //     uint256 reward;
-    //     SurveyReward memory survey = survey_rewards[survey_key];
-    //     if (performance >= survey.top_perform_threshold){
-    //         reward = survey.max_reward;
-    //     }else if (performance <= survey.low_perform_threshold){
-    //         reward = survey.min_reward_multiplier * performance;
-    //     }else{
-    //         reward = survey.med_reward_multiplier * performance;
-    //     }
-    //     dp_staking_rewards[dp_address] = dp_staking_rewards[dp_address] + reward;
-    //     dp_stack.push(dp_address);
-    // }
+    function calculate_reward(address dp_address, string memory survey_key, uint performance)public onlyOwner{
+        // CALCULATE REWARD OF DATA PROVIDERS BASED ON THEIR PERFORMANCE
+        uint256 reward;
+        SurveyReward memory survey = survey_rewards[survey_key];
+        if (performance >= survey.top_perform_threshold){
+            reward = survey.max_reward;
+        }else if (performance <= survey.low_perform_threshold){
+            reward = survey.min_reward_multiplier * performance / survey.target_number;
+        }else{
+            reward = survey.med_reward_multiplier * performance / 1000;
+        }
+        dp_staking_rewards[dp_address] = dp_staking_rewards[dp_address] + reward;
+        dp_stack.push(dp_address);
+    }
 
-    // function add_reward(address dp_address, uint256 reward) public onlyOwner{
-    //     // DIRECTLY RECORD DATA PROVIDERS' REWARD
-    //     dp_staking_rewards[dp_address] = dp_staking_rewards[dp_address] + reward;
-    //     dp_stack.push(dp_address);
-    // }
+    function add_reward(address dp_address, uint256 reward) public onlyOwner{
+        // DIRECTLY RECORD DATA PROVIDERS' REWARD
+        dp_staking_rewards[dp_address] = dp_staking_rewards[dp_address] + reward;
+        dp_stack.push(dp_address);
+    }
 
 
-    // function distribute_all_rewards() public onlyOwner{
-    //     //DISTRIBUTE ALL RECORDED REWARDS AT ONCE (not by survey, probably will call this function every 15 minutes and will transfer all rewards accumulated within the 15 mins)
-    //     for(uint i=0; i<dp_stack.length; i++){
-    //         address dp = dp_stack[i];
-    //         uint256 received_rewards = dp_staking_rewards[dp];
-    //         if (received_rewards > 0){
-    //             crowdcoin.transferFrom(contract_address, dp, received_rewards);
-    //         }
-    //         dp_staking_rewards[dp] = 0; //reset dp_staking_rewards balance
-    //     }
-    //     delete dp_stack; //reset dp_stack records
-    // }
+    function distribute_all_rewards() public onlyOwner{
+        //DISTRIBUTE ALL RECORDED REWARDS AT ONCE (not by survey, probably will call this function every 15 minutes and will transfer all rewards accumulated within the 15 mins)
+        for(uint i=0; i<dp_stack.length; i++){
+            address dp = dp_stack[i];
+            uint256 received_rewards = dp_staking_rewards[dp];
+            if (received_rewards > 0){
+                crowdcoin.transferFrom(contract_address, dp, received_rewards);
+            }
+            dp_staking_rewards[dp] = 0; //reset dp_staking_rewards balance
+        }
+        delete dp_stack; //reset dp_stack records
+    }
 
     // function set_create_survey_cost(uint256 cost)public {
     //     // REWARDS POINT TO BE DEDUCTED WHEN CREATE SURVEY
