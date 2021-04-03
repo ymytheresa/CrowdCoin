@@ -127,7 +127,7 @@ def verify_purchase(sender_address, tx_hash):
             if infura_url != "http://127.0.0.1:7545":
                 return web3.fromWei(amount, 'ether')
             return amount
-    return None
+    return -1
 
 def calc_reward(address, survey_id, score):
     score = int(score)
