@@ -10,8 +10,8 @@ dev = os.getenv("PUBLIC_KEY")
 dev_priv = os.getenv("PRIVATE_KEY")
 web3.eth.default_account = dev
 
-# infura_url = "https://rinkeby.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa" #if rinkeby
-infura_url = "http://127.0.0.1:7545" #if ganache
+infura_url = "https://rinkeby.infura.io/v3/9d9db26b6f8f47f5b3f2e04c8ca9f9fa" #if rinkeby
+# infura_url = "http://127.0.0.1:7545" #if ganache
 web3 = Web3(Web3.HTTPProvider(infura_url))
 web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
