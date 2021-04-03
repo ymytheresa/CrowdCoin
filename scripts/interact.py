@@ -6,7 +6,6 @@ from web3.middleware import geth_poa_middleware
 from hexbytes import HexBytes as hb
 import argparse
 
-
 dev = os.getenv("PUBLIC_KEY")
 dev_priv = os.getenv("PRIVATE_KEY")
 web3.eth.default_account = dev
