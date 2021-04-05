@@ -166,4 +166,4 @@ elif func == add_coin_get_bal or func == upload_checksum_get_hash or func == ver
 elif func == calc_reward:
     print(func(args.revs[0],args.revs[1],args.revs[2]))
 elif func == create_survey:
-    print(func(args.revs[0],args.revs[1],args.revs[2],args.revs[3],args.revs[4],args.revs[5]))
+    print(func(args.revs[0], args.revs[1], args.revs[2], args.revs[3], args.revs[4], args.revs[5]))

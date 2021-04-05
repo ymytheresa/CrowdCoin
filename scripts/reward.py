@@ -12,6 +12,7 @@ import json
 ac0 = '0x66aB6D9362d4F35596279692F0251Db635165871'
 ac1 = '0x33A4622B82D4c04a53e170c638B944ce27cffce3'
 ac2 = '0x0063046686E46Dc6F15918b61AE2B121458534a5'
+ac3 = '0x46C0a5326E643E4f71D3149d50B48216e174Ae84'
 
 dev = accounts.add(os.getenv(config['wallets']['from_key']))
 with open('./build/contracts/CrowdCoin.json') as f:
@@ -29,7 +30,6 @@ with open('./address.txt') as f:
 
 crowdcoin = Contract.from_abi("CrowdCoin", c_address, c_abi)
 reward = Contract.from_abi("Reward", r_address, r_abi)
-reward.set_coin(crowdcoin.address, {'from': dev})
 
 def get_balance(account):
     '''
@@ -86,11 +86,27 @@ def upload_checksum(survey_key, checksum):
 
 
 def main():
-    reward.calculate_reward('0x66aB6D9362d4F35596279692F0251Db635165871', 'PUBLIC_KEY', 90, {'from': dev})
-    reward.calculate_reward('0x33A4622B82D4c04a53e170c638B944ce27cffce3', 'PUBLIC_KEY', 70, {'from': dev})
-    reward.calculate_reward('0x0063046686E46Dc6F15918b61AE2B121458534a5', 'PUBLIC_KEY', 20, {'from': dev})
-    reward.distribute_all_rewards({'from': dev})
-    print(get_balance(ac0))
-    print(get_balance(ac1))
-    print(get_balance(ac2))
+    reward.calculate_reward(ac3, 'PUBLIC_KEY', 23, {'from': dev})
+    # reward.calculate_reward('0x33A4622B82D4c04a53e170c638B944ce27cffce3', 'PUBLIC_KEY', 70, {'from': dev})
+    # reward.calculate_reward('0x0063046686E46Dc6F15918b61AE2B121458534a5', 'PUBLIC_KEY', 20, {'from': dev})
+    # print(reward.get_dp_stacking(ac3))
+    # reward.distribute_all_rewards({'from': dev})
+    # print(get_balance(ac0))
+    # print(get_balance(reward.address))
+    # print(get_balance(ac1))
+    # print(get_balance(ac2))
+    # print(accounts[1])/
+    # reward.create_survey(accounts[1], 'KEY', 9999, 100, 75, 40, {'from': dev})
+    # result = reward.get_survey_reward_by_key('KEY', {'from': dev})
+    # print(list(result)[1:])
+    # answer = [accounts[1], 9999, 100, 75, 40, 99, 44, 1320]
+    # print(answer[1:])
+    # print(result == answer)
+    log = reward.log_checksum('PUBLIC_KEY', '@@@', "CHECKSUM", {'from': dev})
+    event = log.events['Log_checksum']['checksum']
+    print(event)
+    # result = {'Log_checksum': [OrderedDict([('survey_key', 'PUBLIC_KEY'), ('space', '@@@'), ('checksum', 'CHECKSUM')])]}
+    # print(result == event)
+
+
     
