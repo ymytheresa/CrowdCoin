@@ -104,12 +104,9 @@ contract Reward is Ownable{
         dp_stack.push(dp_address);
     }
 
-    function add_reward(address dp_address, uint256 reward) public onlyOwner{
-        // DIRECTLY RECORD DATA PROVIDERS' REWARD
-        dp_staking_rewards[dp_address] = dp_staking_rewards[dp_address] + reward;
-        dp_stack.push(dp_address);
+    function get_dp_stacking(address dp_address) public view returns(uint256){
+        return dp_staking_rewards[dp_address];
     }
-
 
     function distribute_all_rewards() public onlyOwner{
         //DISTRIBUTE ALL RECORDED REWARDS AT ONCE (not by survey, probably will call this function every 15 minutes and will transfer all rewards accumulated within the 15 mins)
@@ -123,11 +120,6 @@ contract Reward is Ownable{
         }
         delete dp_stack; //reset dp_stack records
     }
-
-    // function set_create_survey_cost(uint256 cost)public {
-    //     // REWARDS POINT TO BE DEDUCTED WHEN CREATE SURVEY
-    //     create_survey_cost = cost;
-    // }
 
     function create_survey(
         address survey_owner_address,
@@ -175,9 +167,7 @@ contract Reward is Ownable{
         }
     
     function log_checksum(string memory survey_key, string memory space, string memory checksum) public{
-        if (survey_rewards[survey_key].budget != 0){
-            emit Log_checksum(survey_key, space, checksum);
-        }
+        emit Log_checksum(survey_key, space, checksum);
     }
 
 }
