@@ -31,6 +31,12 @@ with open('./address.txt') as f:
 crowdcoin = web3.eth.contract(address=c_address, abi=c_abi)
 reward = web3.eth.contract(address=r_address, abi=r_abi)
 
+def get_contracts_address():
+    data = {}
+    data['crowdcoin'] = c_address
+    data['reward'] = r_address
+    return json.dumps(data)
+
 def get_tx(contract):
     nonce = web3.eth.getTransactionCount(dev)
     tx = {
@@ -45,7 +51,8 @@ def get_tx(contract):
 def sign_tx(tx):
     signed = web3.eth.account.signTransaction(tx, dev_priv)
     tx_hash = web3.eth.sendRawTransaction(signed.rawTransaction)
-    return hb.hex(tx_hash)
+    result = tx_hash.hex()
+    return result
 
 def get_balance(account):
     '''
@@ -54,11 +61,21 @@ def get_balance(account):
     balance = crowdcoin.functions.balanceOf(account).call()
     if infura_url != "http://127.0.0.1:7545":
         balance = web3.fromWei(balance, 'ether') #if on testnet
-    return balance
+    data = {}
+    data['account'] = account
+    data['balance'] = int(balance)
+    return json.dumps(data)
 
 def add_coin_get_bal(purchase_add, amount):
-    result = web3.eth.waitForTransactionReceipt((add_coin(purchase_add, amount))) 
-    return get_balance(purchase_add)
+    result = web3.eth.waitForTransactionReceipt((add_coin(purchase_add, amount)))
+    balance = crowdcoin.functions.balanceOf(purchase_add).call()
+    if infura_url != "http://127.0.0.1:7545":
+        balance = web3.fromWei(balance, 'ether') #if on testnet
+    data = {}
+    data['account'] = purchase_add
+    data['balance'] = int(balance)
+    data['tx_hash'] = result['transactionHash'].hex()
+    return json.dumps(data)
 
 def add_coin(purchase_add, amount):
     '''
@@ -69,7 +86,6 @@ def add_coin(purchase_add, amount):
         amount = web3.toWei(amount, 'ether')
     tx = get_tx(reward.address)
     tx['data'] = reward.encodeABI(fn_name='purchase_coin', args=[purchase_add, amount])
-    # sign_tx(tx)
     return sign_tx(tx)
 
 def get_survey_info(public_key):
@@ -78,7 +94,7 @@ def get_survey_info(public_key):
     '''
     info = {}
     info[public_key] = reward.functions.get_survey_reward_by_key(public_key).call()
-    return info[public_key]
+    return json.dumps(info[public_key])
 
 def create_survey(survey_owner_address,
     survey_public_key,
@@ -111,23 +127,37 @@ def upload_checksum(survey_id, checksum):
     separator = '@@@OMIT@@@'
     tx['data'] = reward.encodeABI(fn_name='log_checksum', args=[survey_id, separator, checksum])
     return sign_tx(tx)
-
+ 
 def upload_checksum_get_hash(survey_id, checksum):
     result = web3.eth.waitForTransactionReceipt((upload_checksum(survey_id, checksum)))
-    return hb.hex(result['transactionHash'])
+    data = {}
+    data['survey_id'] = survey_id
+    data['checksum'] = checksum
+    data['tx_hash'] = result['transactionHash'].hex()
+    return json.dumps(data)
 
 def verify_purchase(sender_address, tx_hash):
     # log = web3.eth.getTransactionReceipt(tx_hash)
     transaction = web3.eth.get_transaction(tx_hash)
     recipient = crowdcoin.decode_function_input(transaction.input)[1]['recipient']
     amount = crowdcoin.decode_function_input(transaction.input)[1]['amount']
+    data = {}
+    data['sender_address'] = sender_address
+    data['tx_hash'] = tx_hash
+
     from_address = transaction['from']
     if recipient == reward.address:
         if from_address == sender_address:
             if infura_url != "http://127.0.0.1:7545":
-                return web3.fromWei(amount, 'ether')
-            return amount
-    return -1
+                amount = web3.fromWei(amount, 'ether')
+                data['amount'] = int(amount)
+                return json.dumps(data)
+            amount = amount
+            data['amount'] = int(amount)
+            return json.dumps(data)
+    amount = -1
+    data['amount'] = amount
+    return json.dumps(data)
 
 def calc_reward(address, survey_id, score):
     score = int(score)
@@ -141,6 +171,7 @@ def distribute_reward():
     return sign_tx(tx)
 
 FUNCTION_MAP = {
+    'getcont' : get_contracts_address,
     'getbal': get_balance,
     'addcoin': add_coin_get_bal,
     'getsur': get_survey_info,
@@ -157,7 +188,7 @@ parser.add_argument('revs', metavar='N', nargs='+', help='revisions')
 args = parser.parse_args()
 func = FUNCTION_MAP[args.command]
 
-if func == distribute_reward:
+if func == distribute_reward or func == get_contracts_address:
     print(func())
 elif func == get_balance or func == get_survey_info:
     print(func(args.revs[0]))

@@ -110,3 +110,5 @@ def test_emit(reward):
     first_check = (key == 'PUBLIC_KEY')
     second_check = (check == 'checksum')
     assert first_check == second_check
+
+|
