@@ -15,8 +15,8 @@ contract Reward is Ownable{
         uint top_perform_threshold;
         uint low_perform_threshold;
         uint256 max_reward;
-        uint256 min_reward_multiplier;
-        uint256 med_reward_multiplier;
+        // uint256 min_reward_multiplier;
+        // uint256 med_reward_multiplier;
     }
 
     CrowdCoin crowdcoin;
@@ -56,13 +56,13 @@ contract Reward is Ownable{
         return budget / target_number;
     }
 
-    function get_min_reward(uint top_perform, uint256 budget) public pure returns(uint256){
-        return budget / (3 * top_perform);
-    }
+    // function get_min_reward(uint top_perform, uint256 budget) public pure returns(uint256){
+    //     return budget / (3 * top_perform);
+    // }
 
-    function get_med_reward(uint top_perform, uint256 max) public pure returns(uint256){
-        return 1000 * max / top_perform;
-    }
+    // function get_med_reward(uint top_perform, uint256 max) public pure returns(uint256){
+    //     return 1000 * max / top_perform;
+    // }
 
     function add_survey_reward(
         // SET CONTRACT REWARD DETAILS WHEN SURVEY IS CREATED
@@ -74,8 +74,8 @@ contract Reward is Ownable{
         uint _low_perform_threshold
         )public{
             uint256 _max_reward = get_max_reward(_budget, _target_number);
-            uint256 _min_reward_multiplier = get_min_reward(_top_perform_threshold, _budget);
-            uint256 _med_reward_multiplier = get_med_reward(_top_perform_threshold, _max_reward);
+            // uint256 _min_reward_multiplier = get_min_reward(_top_perform_threshold, _budget);
+            // uint256 _med_reward_multiplier = get_med_reward(_top_perform_threshold, _max_reward);
 
             survey_rewards[survey_public_key] = SurveyReward({
                 survey_owner : _survey_owner,
@@ -83,9 +83,9 @@ contract Reward is Ownable{
                 target_number : _target_number,
                 top_perform_threshold : _top_perform_threshold,
                 low_perform_threshold : _low_perform_threshold,
-                max_reward : _max_reward,
-                min_reward_multiplier : _min_reward_multiplier,
-                med_reward_multiplier : _med_reward_multiplier
+                max_reward : _max_reward
+                // min_reward_multiplier : _min_reward_multiplier,
+                // med_reward_multiplier : _med_reward_multiplier
             });
         }
 
@@ -96,9 +96,9 @@ contract Reward is Ownable{
         if (performance >= survey.top_perform_threshold){
             reward = survey.max_reward;
         }else if (performance <= survey.low_perform_threshold){
-            reward = survey.min_reward_multiplier * performance / survey.target_number;
+            reward = (performance * survey.budget) / (survey.target_number * 3 * survey.top_perform_threshold);
         }else{
-            reward = survey.med_reward_multiplier * performance / 1000;
+            reward = (performance * survey.budget) / (survey.target_number * survey.top_perform_threshold);
         }
         dp_staking_rewards[dp_address] = dp_staking_rewards[dp_address] + reward;
         dp_stack.push(dp_address);
@@ -149,9 +149,9 @@ contract Reward is Ownable{
             uint256,
             uint,
             uint,
-            uint256,
-            uint256,
             uint256
+            // uint256,
+            // uint256
         ){
             SurveyReward memory s = survey_rewards[survey_public_key];
             return(
@@ -160,9 +160,9 @@ contract Reward is Ownable{
                 s.target_number,
                 s.top_perform_threshold,
                 s.low_perform_threshold,
-                s.max_reward,
-                s.min_reward_multiplier,
-                s.med_reward_multiplier
+                s.max_reward
+                // s.min_reward_multiplier,
+                // s.med_reward_multiplier
             );
         }
     

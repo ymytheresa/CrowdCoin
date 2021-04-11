@@ -337,7 +337,7 @@
         "id": 1,
         "nodeType": "ImportDirective",
         "scope": 71,
-        "sourceUnit": 1196,
+        "sourceUnit": 1148,
         "src": "226:79:3",
         "symbolAliases": [],
         "unitAlias": ""
@@ -391,7 +391,7 @@
         ],
         "contractDependencies": [
           545,
-          1222
+          1174
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -400,7 +400,7 @@
         "linearizedBaseContracts": [
           70,
           545,
-          1222
+          1174
         ],
         "name": "CrowdCoin",
         "nodeType": "ContractDefinition",
