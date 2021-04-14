@@ -92,9 +92,17 @@ def get_survey_info(public_key):
     '''
     fetch the main points of survey 
     '''
-    info = {}
-    info[public_key] = reward.functions.get_survey_reward_by_key(public_key).call()
-    return json.dumps(info[public_key])
+    info = reward.functions.get_survey_reward_by_key(public_key).call()
+    data = {}
+    data['owner_address'] = info[0]
+    data['budget'] = info[1]
+    data['number'] = info[2]
+    data['top_threshold'] = info[3]
+    data['low_threshold'] = info[4]
+    data['max_reward'] = info[5]
+    return json.dumps(data) 
+
+    return info
 
 def create_survey(survey_owner_address,
     survey_public_key,
@@ -117,7 +125,10 @@ def create_survey(survey_owner_address,
                                                                     _target_number,
                                                                     _top_perform_threshold,
                                                                     _low_perform_threshold,])
-    return sign_tx(tx)
+    data = {}
+    data['tx_hash'] = sign_tx(tx)
+    return json.dumps(data)
+    # return sign_tx(tx)
 
 def upload_checksum(survey_id, checksum):
     '''
@@ -163,12 +174,17 @@ def calc_reward(address, survey_id, score):
     score = int(score)
     tx = get_tx(reward.address)
     tx['data'] = reward.encodeABI(fn_name='calculate_reward', args=[address, survey_id, score])
-    return sign_tx(tx)
+    data = {}
+    data['tx_hash'] = sign_tx(tx)
+    return json.dumps(data)
 
 def distribute_reward():
     tx = get_tx(reward.address)
     tx['data'] = reward.encodeABI(fn_name='distribute_all_rewards', args=[])
-    return sign_tx(tx)
+    data = {}
+    data['tx_hash'] = sign_tx(tx)
+    return json.dumps(data)
+    # return sign_tx(tx)
 
 FUNCTION_MAP = {
     'getcont' : get_contracts_address,
