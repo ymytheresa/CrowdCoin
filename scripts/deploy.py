@@ -3,8 +3,8 @@ from brownie import *
 import json
 
 dev = accounts.add(os.getenv(config['wallets']['from_key']))
-reward = Reward.deploy({'from': dev})
-crowdcoin = CrowdCoin.deploy({'from': dev})
+reward = Reward.deploy({'from': dev}, publish_source=True)
+crowdcoin = CrowdCoin.deploy({'from': dev}, publish_source=True)
 reward.set_coin(crowdcoin.address, {'from': dev})
 
 def main():
