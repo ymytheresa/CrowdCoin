@@ -89,7 +89,7 @@ contract Reward is Ownable{
             });
         }
 
-    function calculate_reward(address dp_address, string memory survey_key, uint performance)public onlyOwner{
+    function calculate_reward(address dp_address, string memory survey_key, uint256 performance)public onlyOwner{
         // CALCULATE REWARD OF DATA PROVIDERS BASED ON THEIR PERFORMANCE
         uint256 reward;
         SurveyReward memory survey = survey_rewards[survey_key];
@@ -112,7 +112,7 @@ contract Reward is Ownable{
         //DISTRIBUTE ALL RECORDED REWARDS AT ONCE (not by survey, probably will call this function every 15 minutes and will transfer all rewards accumulated within the 15 mins)
         for(uint i=0; i<dp_stack.length; i++){
             address dp = dp_stack[i];
-            uint256 received_rewards = dp_staking_rewards[dp];
+            uint256 received_rewards = dp_staking_rewards[dp] * (1 ether);
             if (received_rewards > 0){
                 crowdcoin.transferFrom(contract_address, dp, received_rewards);
             }

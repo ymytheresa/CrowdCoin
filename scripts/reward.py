@@ -81,12 +81,15 @@ def upload_checksum(survey_key, checksum):
     upload the checksum of survey rewards records text file to the chain
     '''
     log = reward.log_checksum(survey_key, checksum, {'from': dev})
-    return log #return transaction hash that can see the checksum on etherscan
+    return log  #return transaction hash that can see the checksum on etherscan
+
+def get_dp(add):
+    return reward.get_dp_stacking(add)
     
 
 
 def main():
-    reward.calculate_reward(ac3, 'PUBLIC_KEY', 23, {'from': dev})
+    # reward.calculate_reward(ac3, 'PUBLIC_KEY', 23, {'from': dev})
     # reward.calculate_reward('0x33A4622B82D4c04a53e170c638B944ce27cffce3', 'PUBLIC_KEY', 70, {'from': dev})
     # reward.calculate_reward('0x0063046686E46Dc6F15918b61AE2B121458534a5', 'PUBLIC_KEY', 20, {'from': dev})
     # print(reward.get_dp_stacking(ac3))
@@ -102,11 +105,11 @@ def main():
     # answer = [accounts[1], 9999, 100, 75, 40, 99, 44, 1320]
     # print(answer[1:])
     # print(result == answer)
-    log = reward.log_checksum('PUBLIC_KEY', '@@@', "CHECKSUM", {'from': dev})
-    event = log.events['Log_checksum']['checksum']
-    print(event)
+    # log = reward.log_checksum('PUBLIC_KEY', '@@@', "CHECKSUM", {'from': dev})
+    # event = log.events['Log_checksum']['checksum']
+    # print(event)
     # result = {'Log_checksum': [OrderedDict([('survey_key', 'PUBLIC_KEY'), ('space', '@@@'), ('checksum', 'CHECKSUM')])]}
     # print(result == event)
-
+    print(get_dp('0x21b42413bA931038f35e7A5224FaDb065d297Ba3'))
 
     

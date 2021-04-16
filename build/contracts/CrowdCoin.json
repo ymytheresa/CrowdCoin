@@ -380,7 +380,7 @@
         ],
         "contractDependencies": [
           544,
-          977
+          980
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -389,7 +389,7 @@
         "linearizedBaseContracts": [
           69,
           544,
-          977
+          980
         ],
         "name": "CrowdCoin",
         "nodeType": "ContractDefinition",
