@@ -89,27 +89,6 @@ def get_dp(add):
 
 
 def main():
-    # reward.calculate_reward(ac3, 'PUBLIC_KEY', 23, {'from': dev})
-    # reward.calculate_reward('0x33A4622B82D4c04a53e170c638B944ce27cffce3', 'PUBLIC_KEY', 70, {'from': dev})
-    # reward.calculate_reward('0x0063046686E46Dc6F15918b61AE2B121458534a5', 'PUBLIC_KEY', 20, {'from': dev})
-    # print(reward.get_dp_stacking(ac3))
-    # reward.distribute_all_rewards({'from': dev})
-    # print(get_balance(ac0))
-    # print(get_balance(reward.address))
-    # print(get_balance(ac1))
-    # print(get_balance(ac2))
-    # print(accounts[1])/
-    # reward.create_survey(accounts[1], 'KEY', 9999, 100, 75, 40, {'from': dev})
-    # result = reward.get_survey_reward_by_key('KEY', {'from': dev})
-    # print(list(result)[1:])
-    # answer = [accounts[1], 9999, 100, 75, 40, 99, 44, 1320]
-    # print(answer[1:])
-    # print(result == answer)
-    # log = reward.log_checksum('PUBLIC_KEY', '@@@', "CHECKSUM", {'from': dev})
-    # event = log.events['Log_checksum']['checksum']
-    # print(event)
-    # result = {'Log_checksum': [OrderedDict([('survey_key', 'PUBLIC_KEY'), ('space', '@@@'), ('checksum', 'CHECKSUM')])]}
-    # print(result == event)
     print(get_dp('0x21b42413bA931038f35e7A5224FaDb065d297Ba3'))
 
     

@@ -15,8 +15,6 @@ contract Reward is Ownable{
         uint top_perform_threshold;
         uint low_perform_threshold;
         uint256 max_reward;
-        // uint256 min_reward_multiplier;
-        // uint256 med_reward_multiplier;
     }
 
     CrowdCoin crowdcoin;
@@ -55,14 +53,6 @@ contract Reward is Ownable{
     function get_max_reward(uint256 budget, uint256 target_number) public pure returns(uint256){
         return budget / target_number;
     }
-
-    // function get_min_reward(uint top_perform, uint256 budget) public pure returns(uint256){
-    //     return budget / (3 * top_perform);
-    // }
-
-    // function get_med_reward(uint top_perform, uint256 max) public pure returns(uint256){
-    //     return 1000 * max / top_perform;
-    // }
 
     function add_survey_reward(
         // SET CONTRACT REWARD DETAILS WHEN SURVEY IS CREATED
