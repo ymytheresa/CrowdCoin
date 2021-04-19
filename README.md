@@ -125,11 +125,12 @@ arguments : $address, $amount
 
 Success Responses Content :
 
-````
+```
 {"adddress": $address, "balance": $address_balance_after_addcoin, "tx_hash": $transaction_hash}
 ```
 
 Sample call :
+
 ```bash
 python3 scripts/interact.py addcoin 0x66aB6D9362d4F35596279692F0251Db635165871 100
-````
+```
