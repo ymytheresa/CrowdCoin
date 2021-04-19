@@ -87,29 +87,23 @@ command : `getcont`
 
 arguments : `all`
 
-Success Responses Content :
-
-```
-{ "crowdcoin": $crowdcoin_contract_address, "reward": $reward_contract_address}
-```
-
 Sample call :
 
 ```bash
 python3 scripts/interact.py getcont all
 ```
 
+Success Responses Content :
+
+```
+{ "crowdcoin": $crowdcoin_contract_address, "reward": $reward_contract_address}
+```
+
 ### Get account balance of CrowdCoin
 
 command : `getbal`
 
-arguments : $address
-
-Success Responses Content :
-
-```
-{"adddress": $address, "balance": $address_balance}
-```
+arguments : `$address`
 
 Sample call :
 
@@ -117,20 +111,150 @@ Sample call :
 python3 scripts/interact.py getbal 0x66aB6D9362d4F35596279692F0251Db635165871
 ```
 
+Success Responses Content :
+
+```bash
+{"adddress": $address, "balance": $address_balance}
+```
+
 ## Add Crowdcoin to address
 
 command : `addcoin`
 
-arguments : $address, $amount
+restriction :
+Only owner can perform this action
 
-Success Responses Content :
-
-```
-{"adddress": $address, "balance": $address_balance_after_addcoin, "tx_hash": $transaction_hash}
-```
+arguments : `$address, $amount`
 
 Sample call :
 
 ```bash
 python3 scripts/interact.py addcoin 0x66aB6D9362d4F35596279692F0251Db635165871 100
+```
+
+Success Responses Content :
+
+```bash
+{"adddress": $address, "balance": $address_balance_after_addcoin, "tx_hash": $transaction_hash}
+```
+
+## Create survey
+
+command : `mksur`
+
+arguments : `$survey_owner_address, $public_key_of_survey, $budget, $target_number_of_responses, $top_performance_threshold, $low_performance_threshold`
+
+Sample call :
+
+```bash
+python3 scripts/interact.py mksur 0x33A4622B82D4c04a53e170c638B944ce27cffce3 KEY 9999 100 70 20
+```
+
+Success Responses Content :
+
+```bash
+{"tx_hash": $transaction_hash}
+```
+
+## Get survey information
+
+command : `getsur`
+
+arguments : `$public_key_of_survey`
+
+Sample call :
+
+```bash
+python3 scripts/interact.py getsur KEY
+```
+
+Success Responses Content :
+
+```bash
+{
+    "owner_address": $owner_address,
+    "budget": $budget,
+    "number": $target_number_of_responses,
+    "top_threshold": $top_performance_threshold,
+    "low_threshold": $low_performance_threshold,
+    "max_reward": $maximum_reward_of_this_surveys
+}
+```
+
+## Calculate reward for data providers who submitted data
+
+command : `calcrew`
+
+restriction :
+Only owner can perform this action
+
+arguments : `$data_provider_address, $public_key_of_survey, $his_performance_score`
+
+Sample call :
+
+```bash
+python3 scripts/interact.py calcrew 0x66aB6D9362d4F35596279692F0251Db635165871 KEY 90
+```
+
+Success Responses Content :
+
+```bash
+{"tx_hash": $transaction_hash}
+```
+
+## Distribute all calculated rewards
+
+command : `distrew`
+
+restriction :
+Only owner can perform this action
+
+arguments : `all`
+
+Sample call :
+
+```bash
+python3 scripts/interact.py distrew all
+```
+
+Success Responses Content :
+
+```bash
+{"tx_hash": $transaction_hash}
+```
+
+## Upload checksum
+
+command : `upcheck`
+
+arguments : `$public_key_of_survey, $checksum`
+
+Sample call :
+
+```bash
+python3 scripts/interact.py upcheck KEY checksum
+```
+
+Success Responses Content :
+
+```bash
+{"survey_id": $public_key_of_survey, "checksum": $checksum, "tx_hash": $transaction_hash}
+```
+
+## Verify the amount of CrowdCoin received from address to our reward contract address
+
+command : `verify`
+
+arguments : `$address, $transaction_hash`
+
+Sample call :
+
+```bash
+python3 scripts/interact.py verify 0x66aB6D9362d4F35596279692F0251Db635165871 0x2c7d403a2be07e5f55e343b8506dc7afdca3ae556dd242e9bb7d5210d93d46f9
+```
+
+Success Responses Content :
+
+```bash
+{"amount": $amount_received}
 ```
