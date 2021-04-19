@@ -112,7 +112,8 @@ contract Reward is Ownable{
         //DISTRIBUTE ALL RECORDED REWARDS AT ONCE (not by survey, probably will call this function every 15 minutes and will transfer all rewards accumulated within the 15 mins)
         for(uint i=0; i<dp_stack.length; i++){
             address dp = dp_stack[i];
-            uint256 received_rewards = dp_staking_rewards[dp] * (1 ether);
+            uint256 received_rewards = dp_staking_rewards[dp] * (1 ether); // if not ganache
+            // uint256 received_rewards = dp_staking_rewards[dp]; // if ganache
             if (received_rewards > 0){
                 crowdcoin.transferFrom(contract_address, dp, received_rewards);
             }
