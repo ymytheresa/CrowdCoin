@@ -5,15 +5,15 @@
 ### Crypto account
 
 Install MetaMask extension on your web browser. \
-Please go to the Q&A at the bottom part of this ReadMe for more details about the CrowdCoin setting up inside the wallet. \
+Please go to the Q&A at the bottom part of this ReadMe for more details about the CrowdCoin setting up inside the wallet.
 
 ### Infura io
 
-Create account on Infura.io and get the infura project id and url for connecting to the mainnet or testnets. \
+Create account on Infura.io and get the infura project id and url for connecting to the mainnet or testnets.
 
 ### Etherscan
 
-Create account on Etherscan.io and get the etherscan token for automatic contract verification. \
+Create account on Etherscan.io and get the etherscan token for automatic contract verification.
 
 ## Package installation
 
@@ -49,7 +49,7 @@ source ~/.bash_profile
 ## Brownie supported networks configuration
 
 Inside `brownie_config.yaml` \
-Change the infura links to your own infura links \
+Change the infura links to your own infura links
 
 ## Compile contracts
 
@@ -63,7 +63,7 @@ brownie compile --all
 Brownie supports different networks. \
 Argument `--network` will take in a parameter that indicates the network you want to use. \
 `rinkeby` = rinkeby testnet \
-`development` = local ganache \
+`development` = local ganache
 
 ```bash
 # Deploy to ganache
@@ -75,7 +75,7 @@ brownie run scripts/deploy.py --network rinkeby
 
 ## Interact with contracts using CLI
 
-CLI format \
+CLI format
 
 ```bash
 python3 scripts/interact.py [command] [arguments]
@@ -83,17 +83,17 @@ python3 scripts/interact.py [command] [arguments]
 
 ### Get deployed contract addresses
 
-command : `getcont` \
+command : `getcont`
 
-arguments : `all` \
+arguments : `all`
 
-Success Responses Content : \
+Success Responses Content :
 
 ```
 { "crowdcoin": $crowdcoin_contract_address, "reward": $reward_contract_address}
 ```
 
-Sample call : \
+Sample call :
 
 ```bash
 python3 scripts/interact.py getcont all
@@ -101,32 +101,35 @@ python3 scripts/interact.py getcont all
 
 ### Get account balance of CrowdCoin
 
-command : `getbal` \
+command : `getbal`
 
-arguments : $address \
+arguments : $address
 
-Success Responses Content : \
+Success Responses Content :
 
-````
+```
 {"adddress": $address, "balance": $address_balance}
+```
 
-Sample call : \
+Sample call :
+
 ```bash
 python3 scripts/interact.py getbal 0x66aB6D9362d4F35596279692F0251Db635165871
-````
+```
 
 ## Add Crowdcoin to address
 
-command : `addcoin` \
+command : `addcoin`
 
-arguments : $address, $amount \
+arguments : $address, $amount
 
-Success Responses Content : \
+Success Responses Content :
 
 ````
 {"adddress": $address, "balance": $address_balance_after_addcoin, "tx_hash": $transaction_hash}
+```
 
-Sample call : \
+Sample call :
 ```bash
 python3 scripts/interact.py addcoin 0x66aB6D9362d4F35596279692F0251Db635165871 100
 ````
