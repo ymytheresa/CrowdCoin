@@ -95,7 +95,7 @@ python3 scripts/interact.py getcont all
 
 Success Responses Content :
 
-```
+```bash
 { "crowdcoin": $crowdcoin_contract_address, "reward": $reward_contract_address}
 ```
 
@@ -258,3 +258,23 @@ Success Responses Content :
 ```bash
 {"amount": $amount_received}
 ```
+
+# Q&A
+
+- How to add CrowdCoin to any crypto wallet ?
+
+  1. Copy the CrowdCoin contract address
+  2. Go to 'Assets' inside the wallet
+  3. 'Add Tokens'
+  4. Paste the address to 'Token Contract Address'
+  5. 'Next'
+
+- How to get transaction hash for sending CrowdCoin to reward contract address ?
+  1. Copy reward contract address
+  2. 'Send CWC' on the crypto wallet page
+  3. Pate the address to 'Add Recipient'
+  4. Enter the amount of CrowdCoin to be sent in 'Amount'
+  5. 'Next' and 'Confirm'
+  6. Go to wallet home page
+  7. Go to 'Activity'
+  8. Click the last transaction and click the copy button to copy the transaction hash to clipboard
